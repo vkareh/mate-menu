@@ -97,7 +97,7 @@ class GlobalKeyBinding(GObject.GObject, threading.Thread):
         catch = error.CatchError(error.BadAccess)
         for ignored_mask in self.ignored_masks:
             mod = modifiers | ignored_mask
-            result = self.window.grab_key(self.keycode, mod, True, X.GrabModeAsync, X.GrabModeAsync, onerror=catch)
+            result = self.window.grab_key(self.keycode, mod, True, X.GrabModeAsync, X.GrabModeSync, onerror=catch)
         self.display.flush()
         # sync has been blocking. Don't know why.
         #self.display.sync()
@@ -145,7 +145,7 @@ class GlobalKeyBinding(GObject.GObject, threading.Thread):
                     modifiers = event.state & self.known_modifiers_mask
                     if modifiers == self.modifiers:
                         wait_for_release = True
-                        self.display.allow_events(X.AsyncKeyboard, event.time)
+                        self.display.allow_events(X.SyncKeyboard, event.time)
                     else:
                         self.display.allow_events(X.ReplayKeyboard, event.time)
                 elif event.detail == self.keycode and wait_for_release:
